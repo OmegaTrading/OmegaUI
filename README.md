@@ -6,18 +6,18 @@ Backtesting Front End for backtrader (see: https://www.backtrader.com/). Built w
 This file contains configuration parameters that are used throughout the application. A Redis instance must be
 running (this is used to display logs) and the package folder needs to be in PythonPath.
 
-What needs to be updated:
+## What needs to be updated:
 * Default/Backtest: This is the module implementing the Backtest class.
 * Default/Redis: IP address of the Redis datastore.
 * Logging/Root: Path to where logs will be stored.
 * Backtest/Cash: Default cash value.
 
 
-1. Installation:
+## 1. Installation:
 From pypi: pip install omega_ui
 
 
-2. Usage:
+## 2. Usage:
   * Before the UI can be used, the Backtest class needs to be implemented. This is done by inheriting the class Backtest
 from omega_ui.backtest and implementing its methods:
     * get_symbols: Symbols that will be displayed on the UI and on which we can run a backtest.
