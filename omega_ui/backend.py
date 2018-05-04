@@ -13,7 +13,7 @@ import omega_ui.configuration as oc
 import omega_ui.tearsheet as ots
 
 users_file = 'users.json'
-log_dir = os.path.join(oc.cfg['logging']['root'], 'app')
+log_dir = oc.cfg['logging']['root']
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 
@@ -36,11 +36,11 @@ class LogFileCreator:
 
     def next_file_name(self):
         self.counter += 1
-        return log_dir + '/backtest{:03d}-logs.txt'.format(self.counter)
+        return os.path.join(log_dir, '/backtest{:03d}-logs.txt'.format(self.counter))
 
     @staticmethod
     def werkzeug_log_file_name():
-        return log_dir+'/access.log'
+        return os.path.join(log_dir, '/access.log')
 
 
 def test_list(module_name):
