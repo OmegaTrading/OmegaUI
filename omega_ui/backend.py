@@ -73,7 +73,7 @@ def create_ts(uid, module_name, strategy_name, symbols, cash):
         importlib.reload(module)  # Always reload module in case some changes have been made to the strategies
         strategy = getattr(module, strategy_name)
         # Backtest
-        params = backtest.get_parameters(symbols)  # Params need to be extracted from the UI
+        params = backtest.get_parameters(strategy, symbols)  # TODO: Params need to be extracted from the UI
         returns, transactions, pnl = backtest.run(symbols, cash, strategy, **params)
         transactions.reset_index(inplace=True)
         result = json.dumps({

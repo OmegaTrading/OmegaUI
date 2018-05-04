@@ -151,8 +151,8 @@ for js in jss:
 def serve_file(file):
     if file not in stylesheets and file not in jss:
         raise Exception('"{}" is excluded from the allowed static css files'.format(file))
-    print(root_directory)
-    return flask.send_from_directory(root_directory, file)
+    static_directory = os.path.join(root_directory, 'static')
+    return flask.send_from_directory(static_directory, file)
 
 
 @app.callback(dd.Output('strategy', 'options'), [dd.Input('module', 'value')])
