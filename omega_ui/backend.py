@@ -19,8 +19,8 @@ if not os.path.exists(log_dir):
 
 
 # Backtest class
-btm = importlib.import_module(oc.cfg['default']['backtest'])
-backtest = btm.FuturesBacktest()
+btm = importlib.import_module(oc.cfg['default']['module'])
+backtest = getattr(btm, oc.cfg['default']['class'])()
 
 
 class LogFileCreator:
@@ -36,11 +36,11 @@ class LogFileCreator:
 
     def next_file_name(self):
         self.counter += 1
-        return os.path.join(log_dir, '/backtest{:03d}-logs.txt'.format(self.counter))
+        return os.path.join(log_dir, 'backtest{:03d}-logs.txt'.format(self.counter))
 
     @staticmethod
     def werkzeug_log_file_name():
-        return os.path.join(log_dir, '/access.log')
+        return os.path.join(log_dir, 'access.log')
 
 
 def test_list(module_name):
@@ -124,7 +124,7 @@ def extract_statistic(json_ts):
                 'Trade Winning %': 0,
                 'Average Trade': 0,
                 'Average Win': 0,
-                'Average Loss':0,
+                'Average Loss': 0,
                 'Best Trade': 0,
                 'Worst Trade': 0,
                 'Worst Trade Date': 0,

@@ -55,7 +55,7 @@ left_column = dhc.Div([
             columns=['Parameter', 'Value'],
             editable=True,
             id='params-table'
-        ),className='row mb-10'),
+        ), className='row mb-10'),
 
     dhc.Div([
         dhc.Div('Notes:'),
@@ -174,7 +174,7 @@ def update_strategy_value(options):
                   dd.Input('intermediate-params', 'children'),
                   dd.Input('intermediate-value', 'children')
               ])
-def update_status_area(n_clicks, packed_params,result):
+def update_status_area(n_clicks, packed_params, result):
     if result:
         return 'Done!'
     if n_clicks == 0:
@@ -230,7 +230,7 @@ def on_click_backtest_to_intermediate(json_packed, uid):
                   dd.Input('module', 'value'),
                   dd.Input('strategy', 'value'),
                   dd.Input('markets', 'value'),
-                  dd.Input('params-table','rows')
+                  dd.Input('params-table', 'rows')
               ])
 def reset_button(*args):
     return 0

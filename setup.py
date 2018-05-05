@@ -10,7 +10,7 @@ st.setup(
     author_email='',
     description='',
     requires=[
-        'dash', 'dash_auth', 'dash_core_components', 'dash_html_components', 'dash_table_experiments',
+        'backtrader', 'dash', 'dash_auth', 'dash_core_components', 'dash_html_components', 'dash_table_experiments',
         'eventlet', 'empyrical', 'flask', 'flask_socketio', 'numpy', 'pandas', 'plotly', 'redis', 'rlog', 'yaml'
     ]
 )
