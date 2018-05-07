@@ -26,7 +26,8 @@ def create_figure(returns, title):
         y=df_cum_rets,
         line=dict(
             color='#66B266',
-            width=2)
+            width=2),
+        name=''
     )
 
     # plot underwater
@@ -38,7 +39,8 @@ def create_figure(returns, title):
         fill='tonexty',
         line=dict(
             color='#FF6A6A',
-            width=2)
+            width=2),
+        name=''
     )
 
     pivot_for_hm = pd.pivot_table(
@@ -62,12 +64,22 @@ def create_figure(returns, title):
         [1.0, '#006837']
     ]
 
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+    hover = pivot_for_hm.values.astype(str)
+    for x in range(len(pivot_for_hm.index)):
+        for y in range(len(months)):
+            hover[x][y] = '{} {}: {:,.2f}'.format(months[y],pivot_for_hm.index[x],pivot_for_hm.values[x][y])
+
     heat_map = go.Heatmap(
         z=pivot_for_hm.values.tolist(),
         colorscale=custom_color_scale,
         showscale=False,
-        x=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        x=months,
         y=pivot_for_hm.index,
+        text=hover,
+        hoverinfo='text',
+        name=''
     )
 
     annotations = []
@@ -89,7 +101,8 @@ def create_figure(returns, title):
     revenue_by_year = go.Bar(
         x=df_rby.index,
         y=df_rby['return'],
-        marker=dict(color='#44F')
+        marker=dict(color='#44F'),
+        name=''
     )
 
     # draw all plots on the same figure
@@ -120,6 +133,11 @@ def create_figure(returns, title):
     )
 
     fig['layout'].update(showlegend=False, title=title)
+    fig['layout']['yaxis1']['tickformat']='.2f'
+    fig['layout']['xaxis1']['tickformat'] = '%Y-%m-%d'
+    fig['layout']['yaxis2']['tickformat'] = '.2f'
+    fig['layout']['xaxis2']['tickformat'] = '%Y-%m-%d'
+    fig['layout']['yaxis4']['tickformat'] = '.2f'
     fig['layout']['yaxis3']['autorange'] = 'reversed'  # direction of years on the heat map
     fig['layout']['yaxis3']['dtick'] = 1  # show all ticks
     fig['layout']['xaxis4']['dtick'] = 1  # show all ticks

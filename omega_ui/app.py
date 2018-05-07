@@ -33,16 +33,19 @@ level_marks = ['Debug', 'Info', 'Warning', 'Error']
 
 left_column = dhc.Div([
     dhc.Div([
-        dhc.Div('Markets:', className='four columns'),
+        dhc.Div('Symbols:', className='four columns'),
         dcc.Dropdown(
-            id='markets',
+            id='symbols',
             options=[{'label': name, 'value': name} for name in ob.backtest.get_symbols()],
             multi=True,
             className='eight columns u-pull-right')
     ], className='row mb-10'),
     dhc.Div([
         dhc.Div('Module:', className='four columns'),
-        dcc.Input(id='module', type='text', className='eight columns u-pull-right')
+        dcc.Dropdown(
+            id='module',
+            options = [{'label': name, 'value': name} for name in oc.cfg['backtest']['modules'].split()],
+            className='eight columns u-pull-right')
     ], className='row mb-10'),
     dhc.Div([
         dhc.Div('Strategy:', className='four columns'),
@@ -50,7 +53,7 @@ left_column = dhc.Div([
     ], className='row mb-10'),
     dhc.Div(
         dtb.DataTable(  # https://github.com/plotly/dash-table-experiments/blob/master/usage-editable.py
-            rows=[{'Parameter': 'Cash', 'Value': 100000.0}],
+            rows=ob.cash_param(),
             # optional - sets the order of columns
             columns=['Parameter', 'Value'],
             editable=True,
@@ -161,6 +164,11 @@ def update_strategy_list(module_name):
     return [{'label': name, 'value': name} for name in data]
 
 
+@app.callback(dd.Output('params-table', 'rows'), [dd.Input('module', 'value'), dd.Input('strategy', 'value'), dd.Input('symbols', 'value')])
+def update_params_list(module_name,strategy_name, symbol):
+    return ob.params_list(module_name, strategy_name, symbol)
+
+
 @app.callback(dd.Output('strategy', 'value'), [dd.Input('strategy', 'options')])
 def update_strategy_value(options):
     if len(options):
@@ -186,8 +194,8 @@ def update_status_area(n_clicks, packed_params, result):
             module = params['module_i']
         if 'strategy_i' in params:
             strategy = None if params['strategy_i'] == '' else params['strategy_i']
-        if 'markets_i' in params:
-            market = params['markets_i']
+        if 'symbols_i' in params:
+            market = params['symbols_i']
     except:
         pass
     to_provide = []
@@ -203,7 +211,7 @@ def update_status_area(n_clicks, packed_params, result):
     return 'Backtesting...'
 
 
-@app.callback(dd.Output('log-uid', 'value'), [dd.Input('markets', 'options')])
+@app.callback(dd.Output('log-uid', 'value'), [dd.Input('symbols', 'options')])
 def create_uid(m):
     return uuid.uuid4().hex
 
@@ -215,11 +223,11 @@ def on_click_backtest_to_intermediate(json_packed, uid):
         unpacked = json.loads(json_packed)
         module = unpacked['module_i']
         strategy = unpacked['strategy_i']
-        markets = unpacked['markets_i']
-        cash = float(unpacked['Cash'])
-        if module is None or strategy is None or markets is None:
+        symbols = unpacked['symbols_i']
+        params = unpacked['table_params']
+        if module is None or strategy is None or symbols is None:
             return []
-        return ob.create_ts(uid, module, strategy, markets, cash)
+        return ob.create_ts(uid, module, strategy, symbols, params)
     except json.decoder.JSONDecodeError:
         # Ignoring this error (this is happening when inputting values in Module/Strategy boxes)
         return []
@@ -229,7 +237,7 @@ def on_click_backtest_to_intermediate(json_packed, uid):
               [
                   dd.Input('module', 'value'),
                   dd.Input('strategy', 'value'),
-                  dd.Input('markets', 'value'),
+                  dd.Input('symbols', 'value'),
                   dd.Input('params-table', 'rows')
               ])
 def reset_button(*args):
@@ -241,15 +249,17 @@ def reset_button(*args):
                   dd.Input('backtest-btn', 'n_clicks'),
                   dd.Input('module', 'value'),
                   dd.Input('strategy', 'value'),
-                  dd.Input('markets', 'value'),
+                  dd.Input('symbols', 'value'),
                   dd.Input('params-table', 'rows')
               ])
 def update_params(n_clicks, module, strategy, market, rows):
     if n_clicks == 0:
         return ''
-    params = {'module_i': module, 'strategy_i': strategy, 'markets_i': market}
+    params = {'module_i': module, 'strategy_i': strategy, 'symbols_i': market}
+    table_params = {}
     for row in rows:
-        params[row['Parameter']] = row['Value']
+        table_params[row['Parameter']] = row['Value']
+    params['table_params'] = table_params
     return json.dumps(params)
 
 
@@ -293,10 +303,12 @@ VALID_USERNAME_PASSWORD_PAIRS = [
     ['laurent', 'laurent']
 ]
 
+ob.add_user('laurent', 'laurent')
+
 if not debug_mode:
     auth = dash_auth.BasicAuth(
         app,
-        VALID_USERNAME_PASSWORD_PAIRS  # abb.get_users()
+        ob.get_users()
     )
 
 

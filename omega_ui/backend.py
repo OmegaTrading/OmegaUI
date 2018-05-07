@@ -55,9 +55,28 @@ def test_list(module_name):
         return []
 
 
-def create_ts(uid, module_name, strategy_name, symbols, cash):
+def cash_param():
+    return [{'Parameter': 'Cash', 'Value': oc.cfg['backtest']['cash']}]
+
+def params_list(module_name, strategy_name, symbol):
+    params = cash_param()
+    try:
+        # Get strategy
+        module = importlib.import_module(module_name)
+        importlib.reload(module)  # Always reload module in case some changes have been made to the strategies
+        strategy = getattr(module, strategy_name)
+        for key,value in backtest.get_parameters(strategy, symbol).items():
+            params.append({'Parameter': key, 'Value':value})
+    except Exception as e:
+        print('error:',str(e))
+        pass
+    return params
+
+
+def create_ts(uid, module_name, strategy_name, symbols, params):
     result = []
     logger = logging.getLogger()
+    logger.setLevel(logging.NOTSET)
     lfc = LogFileCreator()
     fh = logging.FileHandler(lfc.next_file_name())
     formatter = logging.Formatter('%(levelname)s - %(message)s')
@@ -73,7 +92,7 @@ def create_ts(uid, module_name, strategy_name, symbols, cash):
         importlib.reload(module)  # Always reload module in case some changes have been made to the strategies
         strategy = getattr(module, strategy_name)
         # Backtest
-        params = backtest.get_parameters(strategy, symbols)  # TODO: Params need to be extracted from the UI
+        cash = params.pop('Cash',1)
         returns, transactions, pnl = backtest.run(symbols, cash, strategy, **params)
         transactions.reset_index(inplace=True)
         result = json.dumps({
@@ -144,9 +163,12 @@ def extract_statistic(json_ts):
 
 
 def get_users_list():
-    with open(users_file) as data_file:
-        data = json.load(data_file)
-        return data
+    try:
+        with open(users_file) as data_file:
+            data = json.load(data_file)
+            return data
+    except:
+        return {}
 
 
 def add_user(username, password):
