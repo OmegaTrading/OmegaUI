@@ -18,7 +18,7 @@ class TestStrategy(bt.Strategy):
         self.dataclose = self.datas[0].close
         self.order = None  # To keep track of pending orders
         self.log(logging.INFO, 'Strategy Initialized!')
-        self.log(logging.INFO, 'Param1: {} - Param2: {}'.format(self.p.param1, self.p.param1))
+        self.log(logging.INFO, 'Param1: {} - Param2: {}'.format(self.p.param1, self.p.param2))
 
     def log(self, level, message):
         self.logger.log(level, '{} - {}'.format(self.date(0), message))
@@ -70,5 +70,3 @@ class ExampleBacktest(ob.Backtest):
         pyfoliozer = strat.analyzers.getbyname('pyfolio')
         returns, positions, transactions, gross_lev = pyfoliozer.get_pf_items()
         return returns, transactions, pnl
-
-

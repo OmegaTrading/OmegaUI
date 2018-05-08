@@ -56,4 +56,3 @@ def disconnect():
 
 if __name__ == '__main__':
     socketio.run(s_app, debug=True)
-

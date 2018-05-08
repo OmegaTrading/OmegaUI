@@ -58,6 +58,7 @@ def test_list(module_name):
 def cash_param():
     return [{'Parameter': 'Cash', 'Value': oc.cfg['backtest']['cash']}]
 
+
 def params_list(module_name, strategy_name, symbol):
     params = cash_param()
     try:
@@ -65,10 +66,10 @@ def params_list(module_name, strategy_name, symbol):
         module = importlib.import_module(module_name)
         importlib.reload(module)  # Always reload module in case some changes have been made to the strategies
         strategy = getattr(module, strategy_name)
-        for key,value in backtest.get_parameters(strategy, symbol).items():
-            params.append({'Parameter': key, 'Value':value})
+        for key, value in backtest.get_parameters(strategy, symbol).items():
+            params.append({'Parameter': key, 'Value': value})
     except Exception as e:
-        print('error:',str(e))
+        print('error:', str(e))
         pass
     return params
 
@@ -92,7 +93,7 @@ def create_ts(uid, module_name, strategy_name, symbols, params):
         importlib.reload(module)  # Always reload module in case some changes have been made to the strategies
         strategy = getattr(module, strategy_name)
         # Backtest
-        cash = params.pop('Cash',1)
+        cash = params.pop('Cash', 1)
         returns, transactions, pnl = backtest.run(symbols, cash, strategy, **params)
         transactions.reset_index(inplace=True)
         result = json.dumps({

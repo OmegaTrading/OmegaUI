@@ -44,7 +44,7 @@ left_column = dhc.Div([
         dhc.Div('Module:', className='four columns'),
         dcc.Dropdown(
             id='module',
-            options = [{'label': name, 'value': name} for name in oc.cfg['backtest']['modules'].split()],
+            options=[{'label': name, 'value': name} for name in oc.cfg['backtest']['modules'].split()],
             className='eight columns u-pull-right')
     ], className='row mb-10'),
     dhc.Div([
@@ -165,7 +165,7 @@ def update_strategy_list(module_name):
 
 
 @app.callback(dd.Output('params-table', 'rows'), [dd.Input('module', 'value'), dd.Input('strategy', 'value'), dd.Input('symbols', 'value')])
-def update_params_list(module_name,strategy_name, symbol):
+def update_params_list(module_name, strategy_name, symbol):
     return ob.params_list(module_name, strategy_name, symbol)
 
 
@@ -187,7 +187,7 @@ def update_status_area(n_clicks, packed_params, result):
         return 'Done!'
     if n_clicks == 0:
         return ''
-    module, strategy, market = None, None, None
+    module, strategy, symbol = None, None, None
     try:
         params = json.loads(packed_params)
         if 'module_i' in params:
@@ -195,7 +195,7 @@ def update_status_area(n_clicks, packed_params, result):
         if 'strategy_i' in params:
             strategy = None if params['strategy_i'] == '' else params['strategy_i']
         if 'symbols_i' in params:
-            market = params['symbols_i']
+            symbol = params['symbols_i']
     except:
         pass
     to_provide = []
@@ -203,8 +203,8 @@ def update_status_area(n_clicks, packed_params, result):
         to_provide.append('module')
     if strategy is None:
         to_provide.append('strategy')
-    if market is None:
-        to_provide.append('market')
+    if symbol is None:
+        to_provide.append('symbol')
     if len(to_provide):
         return 'Please provide a value for: {}!'.format(', '.join(to_provide))
 
@@ -252,10 +252,10 @@ def reset_button(*args):
                   dd.Input('symbols', 'value'),
                   dd.Input('params-table', 'rows')
               ])
-def update_params(n_clicks, module, strategy, market, rows):
+def update_params(n_clicks, module, strategy, symbol, rows):
     if n_clicks == 0:
         return ''
-    params = {'module_i': module, 'strategy_i': strategy, 'symbols_i': market}
+    params = {'module_i': module, 'strategy_i': strategy, 'symbols_i': symbol}
     table_params = {}
     for row in rows:
         table_params[row['Parameter']] = row['Value']
@@ -298,12 +298,6 @@ def on_intermediate_to_stat(children):
         ht.append(dhc.Div(style={'border': '1px solid #999', 'margin': '10px 10px 5px'}))
     return dhc.Div(dhc.Div(ht[:-1], className='twelve columns', style={'line-height': '1.4em'}), className='row')
 
-
-VALID_USERNAME_PASSWORD_PAIRS = [
-    ['laurent', 'laurent']
-]
-
-ob.add_user('laurent', 'laurent')
 
 if not debug_mode:
     auth = dash_auth.BasicAuth(

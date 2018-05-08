@@ -69,7 +69,7 @@ def create_figure(returns, title):
     hover = pivot_for_hm.values.astype(str)
     for x in range(len(pivot_for_hm.index)):
         for y in range(len(months)):
-            hover[x][y] = '{} {}: {:,.2f}'.format(months[y],pivot_for_hm.index[x],pivot_for_hm.values[x][y])
+            hover[x][y] = '{} {}: {:,.2f}'.format(pivot_for_hm.index[x], months[y], pivot_for_hm.values[x][y])
 
     heat_map = go.Heatmap(
         z=pivot_for_hm.values.tolist(),
@@ -133,7 +133,7 @@ def create_figure(returns, title):
     )
 
     fig['layout'].update(showlegend=False, title=title)
-    fig['layout']['yaxis1']['tickformat']='.2f'
+    fig['layout']['yaxis1']['tickformat'] ='.2f'
     fig['layout']['xaxis1']['tickformat'] = '%Y-%m-%d'
     fig['layout']['yaxis2']['tickformat'] = '.2f'
     fig['layout']['xaxis2']['tickformat'] = '%Y-%m-%d'
