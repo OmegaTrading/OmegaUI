@@ -31,8 +31,10 @@ from omega_ui.backtest and implementing the following methods:
     * run: Run a backtest. Please note that this needs to return 3 items: returns, transactions and pnl.
 
   * Before running the UI, the following command has to be running: 'python socket_logged.py flask run'. This is the
-  server which redirects the logs to the UI.
+server which redirects the logs to the UI.
 
+  * To run the UI, run the following command: 'python app.py' and in your browser (tested only on Chrome), navigate to
+the specified address (should be http://127.0.0.1:8050/).
 
 ## 3. Example:
 An example has been included in the tests folder to give an idea on how to use the UI (see test_backtest.py). When
