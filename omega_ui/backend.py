@@ -157,7 +157,7 @@ def extract_statistic(json_ts):
                 'Trades': 0
             },
             Time={
-                'Winning Months %': '',
+                'Winning Months %': 0,
                 'Average Winning Month %': 0,
                 'Average Losing Month %': 0,
                 'Best Month %': 0,
