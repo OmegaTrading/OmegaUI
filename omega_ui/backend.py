@@ -60,6 +60,8 @@ def cash_param():
 
 
 def params_list(module_name, strategy_name, symbol):
+    logger = logging.getLogger(__name__)
+
     params = cash_param()
     try:
         # Get strategy
@@ -69,10 +71,9 @@ def params_list(module_name, strategy_name, symbol):
         for key, value in backtest.get_parameters(strategy, symbol).items():
             if isinstance(value, dict):
                 value = json.dumps(value)
-            params.append({'Parameter': key, 'Value': value })
+            params.append({'Parameter': key, 'Value': value})
     except Exception as e:
-        print('error:', str(e))
-        pass
+        logger.log(logging.ERROR, 'Error in loading params: {}!'.format(str(e)))
     return params
 
 
@@ -95,7 +96,9 @@ def create_ts(uid, module_name, strategy_name, symbols, params):
         importlib.reload(module)  # Always reload module in case some changes have been made to the strategies
         strategy = getattr(module, strategy_name)
         # Backtest
-        cash = params.pop('Cash', 1)
+        cash = float(params.pop('Cash', 1))
+        for k, v in params.items():
+            params[k] = json.loads(v)
         returns, transactions, pnl = backtest.run(symbols, cash, strategy, **params)
         transactions.reset_index(inplace=True)
         result = json.dumps({
@@ -105,7 +108,7 @@ def create_ts(uid, module_name, strategy_name, symbols, params):
         })
         logger.log(logging.DEBUG, 'done')
     except Exception as e:
-        logger.log(logging.ERROR, str(e))
+        logger.log(logging.ERROR, 'Error in starting a backtest: {}'.format(str(e)))
     logger.removeHandler(fh)
     logger.removeHandler(rh)
     return result

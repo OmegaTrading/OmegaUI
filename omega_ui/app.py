@@ -44,7 +44,7 @@ left_column = dhc.Div([
         dhc.Div('Module:', className='four columns'),
         dcc.Dropdown(
             id='module',
-            options=[{'label': name, 'value': name} for name in oc.cfg['backtest']['modules'].split()],
+            options=[{'label': name, 'value': name} for name in oc.cfg['backtest']['modules'].split(',')],
             className='eight columns u-pull-right')
     ], className='row mb-10'),
     dhc.Div([
