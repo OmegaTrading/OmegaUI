@@ -2,9 +2,9 @@ import setuptools as st
 
 st.setup(
     name='omega_ui',
-    version='0.0.4',
+    version='0.0.5',
     packages=['omega_ui'],
-    url='',
+    url='https://github.com/OmegaTrading/OmegaUI',
     license='GPL-3.0',
     author='OmegaUI',
     author_email='omegaui.trading@gmail.com',

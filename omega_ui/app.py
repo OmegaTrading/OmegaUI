@@ -258,7 +258,7 @@ def update_params(n_clicks, module, strategy, symbol, rows):
     params = {'module_i': module, 'strategy_i': strategy, 'symbols_i': symbol}
     table_params = {}
     for row in rows:
-        table_params[row['Parameter']] = row['Value']
+        table_params[row['Parameter']] = str(row['Value'])
     params['table_params'] = table_params
     return json.dumps(params)
 
@@ -311,4 +311,4 @@ if __name__ == '__main__':
     logger = logging.getLogger('werkzeug')
     handler = logging.FileHandler(ob.LogFileCreator.werkzeug_log_file_name())
     logger.addHandler(handler)
-    app.run_server(host='0.0.0.0',debug=debug_mode)
+    app.run_server(host='0.0.0.0', debug=debug_mode)
