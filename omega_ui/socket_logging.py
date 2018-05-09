@@ -55,4 +55,4 @@ def disconnect():
 
 
 if __name__ == '__main__':
-    socketio.run(s_app, debug=True)
+    socketio.run(s_app,host='0.0.0.0',debug=True)

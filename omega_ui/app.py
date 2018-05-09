@@ -311,4 +311,4 @@ if __name__ == '__main__':
     logger = logging.getLogger('werkzeug')
     handler = logging.FileHandler(ob.LogFileCreator.werkzeug_log_file_name())
     logger.addHandler(handler)
-    app.run_server(debug=debug_mode)
+    app.run_server(host='0.0.0.0',debug=debug_mode)
