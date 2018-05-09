@@ -67,7 +67,9 @@ def params_list(module_name, strategy_name, symbol):
         importlib.reload(module)  # Always reload module in case some changes have been made to the strategies
         strategy = getattr(module, strategy_name)
         for key, value in backtest.get_parameters(strategy, symbol).items():
-            params.append({'Parameter': key, 'Value': value})
+            if isinstance(value, dict):
+                value = json.dumps(value)
+            params.append({'Parameter': key, 'Value': value })
     except Exception as e:
         print('error:', str(e))
         pass
