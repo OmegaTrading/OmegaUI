@@ -151,7 +151,7 @@ def create_figure(returns, title):
     return fig
 
 
-def create_statistic(returns, transactions):
+def create_statistic(returns, transactions, strat):
     """
         Calculates different metrics for strategy
         :param returns: pd.Series or np.ndarray
@@ -163,6 +163,14 @@ def create_statistic(returns, transactions):
     df = returns.to_frame()
     df['year'] = df.index.year
     df['month'] = df.index.month
+    sqn_analysis = strat.analyzers.SQN.get_analysis()
+    sqn = sqn_analysis['sqn']
+    dd_analysis = strat.analyzers.drawdown.get_analysis()
+    max_dd_length = dd_analysis['max']['len']
+    trade_analysis = strat.analyzers.trades.get_analysis()
+    avg_trade_length = trade_analysis['len']['average']
+    period_analysis = strat.analyzers.period.get_analysis()
+    print(period_analysis)
     df_cum_rets = ep.cum_returns(returns, starting_value=1.0)
     returns_by_month = df.groupby(['year', 'month'])['return'].sum()
     df_rby = df.groupby(['year'])[['return']].sum().apply(lambda x: x * 100)
@@ -172,10 +180,10 @@ def create_statistic(returns, transactions):
             'CAGR': round(ep.cagr(returns) * 100, 2),
             'Sharpe Ratio': round(ep.sharpe_ratio(returns), 2),
             'Annual Volatility': round(ep.annual_volatility(returns) * 100, 2),
-            'SQN': 0,  # TODO
-            'R-Squared': 0,  # TODO
+            'SQN': round(sqn,2),
+            'R-Squared': round(ep.stability_of_timeseries(returns),2),
             'Max Daily Drawdown': round(ep.max_drawdown(returns) * 100, 2),
-            'Max Drawdown Duration': 0,  # TODO
+            'Max Drawdown Duration': max_dd_length,
             'Trades Per Year': 0  # TODO
         },
         Trade={
@@ -188,7 +196,7 @@ def create_statistic(returns, transactions):
             'Worst Trade Date': ''.join(
                 [str(x)[:10] for x in transactions[transactions['value'] == transactions['value'].min()].index.values]
             ),
-            'Avg Days in Trade': 0,  # TODO
+            'Avg Days in Trade': round(avg_trade_length,2),
             'Trades': len(transactions.index)
         },
         Time={
