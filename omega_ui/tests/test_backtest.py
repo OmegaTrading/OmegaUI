@@ -56,6 +56,10 @@ class ExampleBacktest(ob.Backtest):
         cerebro = bt.Cerebro()
         cerebro.broker.setcash(cash)
         cerebro.addanalyzer(bt.analyzers.PyFolio, _name='pyfolio')
+        cerebro.addanalyzer(bt.analyzers.SQN, _name='SQN')
+        cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
+        cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
+
         # Add Data
         for s in symbols:
             df = pd.read_csv(os.path.join(path_dir, '{}.csv'.format(s)), parse_dates=True, index_col=0)
@@ -69,4 +73,4 @@ class ExampleBacktest(ob.Backtest):
         strat = results[0]
         pyfoliozer = strat.analyzers.getbyname('pyfolio')
         returns, positions, transactions, gross_lev = pyfoliozer.get_pf_items()
-        return returns, transactions, pnl
+        return returns, transactions, pnl, strat
