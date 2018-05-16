@@ -169,8 +169,6 @@ def create_statistic(returns, transactions, strat):
     max_dd_length = dd_analysis['max']['len']
     trade_analysis = strat.analyzers.trades.get_analysis()
     avg_trade_length = trade_analysis['len']['average']
-    period_analysis = strat.analyzers.period.get_analysis()
-    print(period_analysis)
     df_cum_rets = ep.cum_returns(returns, starting_value=1.0)
     returns_by_month = df.groupby(['year', 'month'])['return'].sum()
     df_rby = df.groupby(['year'])[['return']].sum().apply(lambda x: x * 100)
