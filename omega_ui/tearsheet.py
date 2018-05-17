@@ -151,7 +151,7 @@ def create_figure(returns, title):
     return fig
 
 
-def create_statistic(returns, transactions, strat):
+def create_statistic(strat):
     """
         Calculates different metrics for strategy
         :param returns: pd.Series or np.ndarray
@@ -160,6 +160,8 @@ def create_statistic(returns, transactions, strat):
             Transactions
         :return: metrics based on returns and transactions
         """
+    pyfoliozer = strat.analyzers.getbyname('pyfolio')
+    returns, positions, transactions, gross_lev = pyfoliozer.get_pf_items()
     df = returns.to_frame()
     df['year'] = df.index.year
     df['month'] = df.index.month

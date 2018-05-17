@@ -71,6 +71,6 @@ class ExampleBacktest(ob.Backtest):
         results = cerebro.run()
         pnl = cerebro.broker.getvalue() - cash
         strat = results[0]
-        pyfoliozer = strat.analyzers.getbyname('pyfolio')
-        returns, positions, transactions, gross_lev = pyfoliozer.get_pf_items()
-        return returns, transactions, pnl, strat
+        #pyfoliozer = strat.analyzers.getbyname('pyfolio')
+        #returns, positions, transactions, gross_lev = pyfoliozer.get_pf_items()
+        return pnl, strat
