@@ -1,0 +1,15 @@
+# python generated files #
+##########################
+*.pyc
+omega_ui.egg-info/
+omega_ui/tests/.ipynb_checkpoints/
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
