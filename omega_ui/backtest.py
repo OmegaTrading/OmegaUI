@@ -1,3 +1,6 @@
+import backtrader as bt
+
+
 class Backtest(object):
     """Backtest class - Inherit and implement this class to run a backtest."""
     def __init__(self):
@@ -26,6 +29,24 @@ class Backtest(object):
         :param cash: float - Starting cash value
         :param strategy: object - Strategy to run the backtest on
         :param params: dict - Parameters dictionary to be displayed in the UI
-        :return: pandas/pandas/float - Returns 3 items: Returns, Transactions and PnL
+        :return: float/results - Returns 2 items: PnL and Results from a cerebro backtest
         """
         pass
+
+    @staticmethod
+    def setup_cerebro(cash):
+        """Setup a Cerebro instance with a starting cash value and all the necessary analyzers.
+
+        :param cash: float - Starting cash value
+        :return: object - Cerebro
+        """
+        # Setup Cerebro
+        cerebro = bt.Cerebro()
+        cerebro.broker.setcash(cash)
+        cerebro.addanalyzer(bt.analyzers.PyFolio, _name='pyfolio')
+        cerebro.addanalyzer(bt.analyzers.SQN, _name='SQN')
+        cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
+        cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
+
+        return cerebro
+

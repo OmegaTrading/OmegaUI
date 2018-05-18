@@ -133,7 +133,7 @@ def create_figure(returns, title):
     )
 
     fig['layout'].update(showlegend=False, title=title)
-    fig['layout']['yaxis1']['tickformat'] ='.2f'
+    fig['layout']['yaxis1']['tickformat'] = '.2f'
     fig['layout']['xaxis1']['tickformat'] = '%Y-%m-%d'
     fig['layout']['yaxis2']['tickformat'] = '.2f'
     fig['layout']['xaxis2']['tickformat'] = '%Y-%m-%d'
@@ -151,25 +151,25 @@ def create_figure(returns, title):
     return fig
 
 
-def create_statistic(strat):
+def create_statistic(returns, transactions, results):
     """
         Calculates different metrics for strategy
         :param returns: pd.Series or np.ndarray
             Daily returns of the strategy, noncumulative.
         :param transactions: pd.Series or np.ndarray
             Transactions
+        :param results: object
+            Results from a backtrader backtest
         :return: metrics based on returns and transactions
         """
-    pyfoliozer = strat.analyzers.getbyname('pyfolio')
-    returns, positions, transactions, gross_lev = pyfoliozer.get_pf_items()
     df = returns.to_frame()
     df['year'] = df.index.year
     df['month'] = df.index.month
-    sqn_analysis = strat.analyzers.SQN.get_analysis()
+    sqn_analysis = results.analyzers.SQN.get_analysis()
     sqn = sqn_analysis['sqn']
-    dd_analysis = strat.analyzers.drawdown.get_analysis()
+    dd_analysis = results.analyzers.drawdown.get_analysis()
     max_dd_length = dd_analysis['max']['len']
-    trade_analysis = strat.analyzers.trades.get_analysis()
+    trade_analysis = results.analyzers.trades.get_analysis()
     avg_trade_length = trade_analysis['len']['average']
     df_cum_rets = ep.cum_returns(returns, starting_value=1.0)
     returns_by_month = df.groupby(['year', 'month'])['return'].sum()
@@ -180,8 +180,8 @@ def create_statistic(strat):
             'CAGR': round(ep.cagr(returns) * 100, 2),
             'Sharpe Ratio': round(ep.sharpe_ratio(returns), 2),
             'Annual Volatility': round(ep.annual_volatility(returns) * 100, 2),
-            'SQN': round(sqn,2),
-            'R-Squared': round(ep.stability_of_timeseries(returns),2),
+            'SQN': round(sqn, 2),
+            'R-Squared': round(ep.stability_of_timeseries(returns), 2),
             'Max Daily Drawdown': round(ep.max_drawdown(returns) * 100, 2),
             'Max Drawdown Duration': max_dd_length,
             'Trades Per Year': 0  # TODO
@@ -196,7 +196,7 @@ def create_statistic(strat):
             'Worst Trade Date': ''.join(
                 [str(x)[:10] for x in transactions[transactions['value'] == transactions['value'].min()].index.values]
             ),
-            'Avg Days in Trade': round(avg_trade_length,2),
+            'Avg Days in Trade': round(avg_trade_length, 2),
             'Trades': len(transactions.index)
         },
         Time={
@@ -212,14 +212,12 @@ def create_statistic(strat):
     )
 
 
-def create_tearsheet(returns, transactions, title):
+def create_tearsheet(results, title):
     """
     Creates tearsheet with graphics: drawdown, underwater, heat map with month returns, revenue by year and also,
     calculates different metrics for strategy
-    :param returns: pd.Series or np.ndarray
-        Daily returns of the strategy, noncumulative.
-    :param transactions: pd.Series or np.ndarray
-        Transactions
+    :param results: object
+        Results from a backtrader backtest
     :param title: string
         Header of tearsheet
     :return: Dictionary
@@ -227,4 +225,7 @@ def create_tearsheet(returns, transactions, title):
          fig: plotly figure that could be displayed using plot or iplot
          statistics: metrics based on returns and transactions
     """
-    return {'fig': create_figure(returns, title), 'statistics': create_statistic(returns, transactions)}
+    pyfoliozer = results.analyzers.getbyname('pyfolio')
+    returns, _, transactions, _ = pyfoliozer.get_pf_items()
+
+    return {'fig': create_figure(returns, title), 'statistics': create_statistic(returns, transactions, results)}
