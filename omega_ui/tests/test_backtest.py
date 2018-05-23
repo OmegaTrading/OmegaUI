@@ -90,13 +90,7 @@ class ExampleBacktest(ob.Backtest):
     def run(self, symbols, cash, strategy, **params):
         path_dir = os.path.dirname(os.path.realpath(__file__))
         # Setup Cerebro
-        cerebro = bt.Cerebro()
-        cerebro.broker.setcash(cash)
-        cerebro.addanalyzer(bt.analyzers.PyFolio, _name='pyfolio')
-        cerebro.addanalyzer(bt.analyzers.SQN, _name='SQN')
-        cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
-        cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
-
+        cerebro = ob.Backtest.setup_cerebro(cash)
         # Add Data
         for s in symbols:
             df = pd.read_csv(os.path.join(path_dir, '{}.csv'.format(s)), parse_dates=True, index_col=0)
@@ -107,7 +101,5 @@ class ExampleBacktest(ob.Backtest):
         # Backtest
         results = cerebro.run()
         pnl = cerebro.broker.getvalue() - cash
-        strat = results[0]
-        #pyfoliozer = strat.analyzers.getbyname('pyfolio')
-        #returns, positions, transactions, gross_lev = pyfoliozer.get_pf_items()
-        return pnl, strat
+
+        return pnl, results[0]
