@@ -44,9 +44,8 @@ class Backtest(object):
         cerebro = bt.Cerebro()
         cerebro.broker.setcash(cash)
         cerebro.addanalyzer(bt.analyzers.PyFolio, _name='pyfolio')
-        cerebro.addanalyzer(bt.analyzers.SQN, _name='SQN')
         cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
+        cerebro.addanalyzer(bt.analyzers.SQN, _name='SQN')
         cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
 
         return cerebro
-

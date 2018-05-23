@@ -151,26 +151,22 @@ def create_figure(returns, title):
     return fig
 
 
-def create_statistic(returns, transactions, results):
+def create_statistic(returns, results):
     """
         Calculates different metrics for strategy
         :param returns: pd.Series or np.ndarray
             Daily returns of the strategy, noncumulative.
-        :param transactions: pd.Series or np.ndarray
-            Transactions
         :param results: object
             Results from a backtrader backtest
-        :return: metrics based on returns and transactions
+        :return: metrics based on returns and trades
         """
     df = returns.to_frame()
     df['year'] = df.index.year
     df['month'] = df.index.month
+    # Analysis
     sqn_analysis = results.analyzers.SQN.get_analysis()
-    sqn = sqn_analysis['sqn']
     dd_analysis = results.analyzers.drawdown.get_analysis()
-    max_dd_length = dd_analysis['max']['len']
-    trade_analysis = results.analyzers.trades.get_analysis()
-    avg_trade_length = trade_analysis['len']['average']
+    trades = results.analyzers.trades.get_analysis()
     df_cum_rets = ep.cum_returns(returns, starting_value=1.0)
     returns_by_month = df.groupby(['year', 'month'])['return'].sum()
     df_rby = df.groupby(['year'])[['return']].sum().apply(lambda x: x * 100)
@@ -180,24 +176,22 @@ def create_statistic(returns, transactions, results):
             'CAGR': round(ep.cagr(returns) * 100, 2),
             'Sharpe Ratio': round(ep.sharpe_ratio(returns), 2),
             'Annual Volatility': round(ep.annual_volatility(returns) * 100, 2),
-            'SQN': round(sqn, 2),
+            'SQN': round(sqn_analysis['sqn'], 2),
             'R-Squared': round(ep.stability_of_timeseries(returns), 2),
-            'Max Daily Drawdown': round(ep.max_drawdown(returns) * 100, 2),
-            'Max Drawdown Duration': max_dd_length,
+            'Max Daily Drawdown': round(dd_analysis['max']['drawdown'], 2),
+            'Max Drawdown Duration': dd_analysis['max']['len'],
             'Trades Per Year': 0  # TODO
         },
         Trade={
-            'Trade Winning %': round(transactions[transactions.value > 0]['value'].count() / len(transactions.index) * 100, 2),
-            'Average Trade': round(transactions['value'].mean(), 2),
-            'Average Win': round(transactions[transactions.value > 0]['value'].mean(), 2),
-            'Average Loss': round(transactions[transactions.value < 0]['value'].mean(), 2),
-            'Best Trade': round(transactions['value'].max(), 2),
-            'Worst Trade': round(transactions['value'].min(), 2),
-            'Worst Trade Date': ''.join(
-                [str(x)[:10] for x in transactions[transactions['value'] == transactions['value'].min()].index.values]
-            ),
-            'Avg Days in Trade': round(avg_trade_length, 2),
-            'Trades': len(transactions.index)
+            'Trade Winning %': round(trades['won']['total'] / trades['total']['total'] * 100, 2),
+            'Average Trade': round(trades['pnl']['net']['average'], 2),
+            'Average Win': round(trades['won']['pnl']['average'], 2),
+            'Average Loss': round(trades['lost']['pnl']['average'], 2),
+            'Best Trade': round(trades['won']['pnl']['max'], 2),
+            'Worst Trade': round(trades['lost']['pnl']['max'], 2),
+            'Worst Trade Date': 0,  # TODO
+            'Avg Days in Trade': round(trades['len']['average'], 2),
+            'Trades': trades['total']['total']
         },
         Time={
             'Winning Months %': round(len(returns_by_month.loc[lambda x: x > 0]) / len(returns_by_month.index) * 100, 2),
@@ -223,9 +217,9 @@ def create_tearsheet(results, title):
     :return: Dictionary
         Dictionary with two records
          fig: plotly figure that could be displayed using plot or iplot
-         statistics: metrics based on returns and transactions
+         statistics: metrics based on returns and trades
     """
     pyfoliozer = results.analyzers.getbyname('pyfolio')
-    returns, _, transactions, _ = pyfoliozer.get_pf_items()
+    returns, _, _, _ = pyfoliozer.get_pf_items()
 
-    return {'fig': create_figure(returns, title), 'statistics': create_statistic(returns, transactions, results)}
+    return {'fig': create_figure(returns, title), 'statistics': create_statistic(returns, results)}

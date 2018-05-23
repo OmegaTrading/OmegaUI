@@ -2,7 +2,7 @@ import setuptools as st
 
 st.setup(
     name='omega_ui',
-    version='0.0.7',
+    version='0.0.8',
     packages=['omega_ui'],
     url='https://github.com/OmegaTrading/OmegaUI',
     license='GPL-3.0',
