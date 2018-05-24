@@ -14,7 +14,7 @@ def create_figure(returns, title):
             Header of tearsheet
         :return: Figure
              Plotly figure that could be displayed using plot or iplot
-        """
+    """
     df = returns.to_frame()
     df['year'] = df.index.year
     df['month'] = df.index.month
@@ -159,7 +159,7 @@ def create_statistic(returns, results):
         :param results: object
             Results from a backtrader backtest
         :return: metrics based on returns and trades
-        """
+    """
     df = returns.to_frame()
     df['year'] = df.index.year
     df['month'] = df.index.month
@@ -208,16 +208,16 @@ def create_statistic(returns, results):
 
 def create_tearsheet(results, title):
     """
-    Creates tearsheet with graphics: drawdown, underwater, heat map with month returns, revenue by year and also,
-    calculates different metrics for strategy
-    :param results: object
-        Results from a backtrader backtest
-    :param title: string
-        Header of tearsheet
-    :return: Dictionary
-        Dictionary with two records
-         fig: plotly figure that could be displayed using plot or iplot
-         statistics: metrics based on returns and trades
+        Creates tearsheet with graphics: drawdown, underwater, heat map with month returns, revenue by year and also,
+        calculates different metrics for strategy
+        :param results: object
+            Results from a backtrader backtest
+        :param title: string
+            Header of tearsheet
+        :return: Dictionary
+            Dictionary with two records
+             fig: plotly figure that could be displayed using plot or iplot
+             statistics: metrics based on returns and trades
     """
     pyfoliozer = results.analyzers.getbyname('pyfolio')
     returns, _, _, _ = pyfoliozer.get_pf_items()
