@@ -99,7 +99,9 @@ def create_ts(uid, module_name, strategy_name, symbols, params):
         cash = float(params.pop('Cash', 1))
         for k, v in params.items():
             params[k] = json.loads(v)
-        returns, transactions, pnl = backtest.run(symbols, cash, strategy, **params)
+        pnl, strat = backtest.run(symbols, cash, strategy, **params)
+        pyfoliozer = strat.analyzers.getbyname('pyfolio')
+        returns, positions, transactions, gross_lev = pyfoliozer.get_pf_items()
         transactions.reset_index(inplace=True)
         result = json.dumps({
             'returns': returns.to_json(),
