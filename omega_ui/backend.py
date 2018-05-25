@@ -101,11 +101,10 @@ def create_ts(uid, module_name, strategy_name, symbols, params):
             params[k] = json.loads(v)
         pnl, strat = backtest.run(symbols, cash, strategy, **params)
         pyfoliozer = strat.analyzers.getbyname('pyfolio')
-        returns, positions, transactions, gross_lev = pyfoliozer.get_pf_items()
-        transactions.reset_index(inplace=True)
+        returns, _, _, _ = pyfoliozer.get_pf_items()
         result = json.dumps({
             'returns': returns.to_json(),
-            'transactions': transactions.to_json(),
+            'statistic': ots.create_statistic(returns,strat),
             'title': '{}: {:,.2f}'.format(symbols, pnl)
         })
         logger.log(logging.DEBUG, 'done')
@@ -131,9 +130,7 @@ def extract_figure(json_ts, w, h):
 def extract_statistic(json_ts):
     try:
         ts = json.loads(json_ts)
-        df_r = pd.read_json(ts['returns'], typ='series').rename('return')
-        df_t = pd.read_json(ts['transactions'])
-        return ots.create_statistic(df_r, df_t)
+        return ts['statistic']
     except:
         return dict(
             Curve={
