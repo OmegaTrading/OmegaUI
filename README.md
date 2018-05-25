@@ -28,7 +28,7 @@ from omega_ui.backtest and implementing the following methods:
   * get_parameters: Default parameters for a given strategy.
   * run: Run a backtest. Please note that this needs to return 3 items: returns, transactions and pnl.
 
-  * Before running the UI, the following command has to be running: 'python socket_logged.py flask run'. This is the
+  * Before running the UI, the following command has to be running: 'python socket_logging.py flask run'. This is the
 server which redirects the logs to the UI.
 
   * To run the UI, run the following command: 'python app.py' and in your browser (tested only on Chrome), navigate to
@@ -48,3 +48,8 @@ support but am happy to help if you get in touch regarding the following topics:
   * Bugs
 I will try to reply to messages but can't guarantee it (as long as the message is properly formatted). This is a work
 in progress and also a project which I use for my research. Offers to contribute will be accepted.
+
+Also, if nothing happens while trying to run a backtest, this might be due to a problem with the Dash React part.
+I had an issue where I had to roll back Dash to a specific version and haven't tried to use the latest version again.
+To find out if there's a problem with React, right-click in Chrome and select Inspect, then navigate to the Console
+tab and look for errors.
