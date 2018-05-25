@@ -26,7 +26,7 @@ From source: Place the omega_ui directory found in the sources inside your proje
 from omega_ui.backtest and implementing the following methods:
   * get_symbols: Symbols that will be displayed on the UI and on which we can run a backtest.
   * get_parameters: Default parameters for a given strategy.
-  * run: Run a backtest. Please note that this needs to return 3 items: returns, transactions and pnl.
+  * run: Run a backtest. Please note that this needs to return 2 items: returns and results from backtrader.
 
   * Before running the UI, the following command has to be running: 'python socket_logging.py flask run'. This is the
 server which redirects the logs to the UI.
