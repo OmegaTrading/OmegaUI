@@ -53,9 +53,9 @@ Also, if nothing happens while trying to run a backtest, this might be due to a 
 I had an issue where I had to roll back Dash to a specific version and haven't tried to use the latest version again.
 To find out if there's a problem with React, right-click in Chrome and select Inspect, then navigate to the Console
 tab and look for errors. See below to know which dash packages work with this application:
-dash==0.21.0
-dash-auth==0.1.0
-dash-core-components==0.20.2
-dash-html-components==0.10.0
-dash-renderer==0.11.3
-dash-table-experiments==0.6.0
+* dash==0.21.0
+* dash-auth==0.1.0
+* dash-core-components==0.20.2
+* dash-html-components==0.10.0
+* dash-renderer==0.11.3
+* dash-table-experiments==0.6.0
